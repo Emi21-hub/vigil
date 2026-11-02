@@ -158,12 +158,21 @@ export default function IncidentPage() {
   const contactName = (cid: string) =>
     contacts.find((c) => c.id === cid)?.name ?? "—";
 
+  // Encontrado en pruebas: el titulo decia "Incidente en curso" incluso
+  // despues de cerrarlo como falsa alarma. Ahora sigue el estado real.
+  const HEADING: Record<string, string> = {
+    active: "Incidente en curso",
+    dispatch_pending: "Incidente sin respuesta",
+    resolved_false_alarm: "Incidente cerrado",
+    confirmed: "Intrusión confirmada",
+  };
+
   return (
     <div className="space-y-8">
       <header className="flex items-start justify-between gap-4">
         <div>
           <h1 className="text-2xl font-medium tracking-tight">
-            Incidente en curso
+            {HEADING[incident.status] ?? "Incidente"}
           </h1>
           <p className="mt-1 text-sm text-neutral-400">
             Disparado el{" "}
