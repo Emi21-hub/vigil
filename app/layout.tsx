@@ -27,6 +27,7 @@ const NAV = [
   { href: "/", label: "Inicio" },
   { href: "/contacts", label: "Contactos" },
   { href: "/log", label: "Historial" },
+  { href: "/research", label: "Investigación" },
 ];
 
 export default function RootLayout({
