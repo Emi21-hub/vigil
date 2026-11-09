@@ -28,6 +28,8 @@ const NAV = [
   { href: "/contacts", label: "Contactos" },
   { href: "/log", label: "Historial" },
   { href: "/research", label: "Investigación" },
+  { href: "/product", label: "Producto" },
+  { href: "/pricing", label: "Precios" },
 ];
 
 export default function RootLayout({
