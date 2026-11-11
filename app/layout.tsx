@@ -39,6 +39,7 @@ const NAV = [
   { href: "/product", label: "Producto" },
   { href: "/pricing", label: "Precios" },
   { href: "/marketing", label: "Marketing" },
+  { href: "/chat", label: "Asesor" },
 ];
 
 export default function RootLayout({
