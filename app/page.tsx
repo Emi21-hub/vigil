@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
+import AbHero from "@/components/AbHero";
+import { Faq, HowItWorks, PlansSection } from "@/components/Landing";
 
 type Property = {
   id: string;
@@ -12,7 +14,7 @@ type Property = {
   armed_at: string | null;
 };
 
-export default function Home() {
+function PropertyDemo() {
   const router = useRouter();
   const [property, setProperty] = useState<Property | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -84,7 +86,7 @@ export default function Home() {
   return (
     <div className="space-y-8">
       <header>
-        <h1 className="text-2xl font-medium tracking-tight">Mis propiedades</h1>
+        <h2 className="text-2xl font-medium tracking-tight">Mis propiedades (demo)</h2>
         <p className="mt-1 text-sm text-neutral-400">
           Cuando la alarma está activa y alguien entra, Vigil avisa a tus
           contactos en orden hasta que alguien responda.
@@ -150,6 +152,20 @@ export default function Home() {
           </p>
         )}
       </section>
+    </div>
+  );
+}
+
+export default function Home() {
+  return (
+    <div className="space-y-16">
+      <AbHero />
+      <div id="demo" className="scroll-mt-6">
+        <PropertyDemo />
+      </div>
+      <HowItWorks />
+      <PlansSection />
+      <Faq />
     </div>
   );
 }
