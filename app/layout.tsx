@@ -33,6 +33,7 @@ export const viewport: Viewport = {
 
 const NAV = [
   { href: "/", label: "Inicio" },
+  { href: "/demo", label: "Demo" },
   { href: "/contacts", label: "Contactos" },
   { href: "/log", label: "Historial" },
   { href: "/research", label: "Investigación" },
@@ -40,6 +41,8 @@ const NAV = [
   { href: "/pricing", label: "Precios" },
   { href: "/marketing", label: "Marketing" },
   { href: "/chat", label: "Asesor" },
+  { href: "/dashboard", label: "Dashboard" },
+  { href: "/docs", label: "Docs" },
 ];
 
 export default function RootLayout({
