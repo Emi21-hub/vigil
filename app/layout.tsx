@@ -8,6 +8,14 @@ export const metadata: Metadata = {
   description:
     "Sistema de alerta de intrusión que escala por una cadena de contactos de confianza, sin grabar tu casa.",
   generator: "v0.app",
+  metadataBase: new URL("https://vigil-vigil21.vercel.app"),
+  openGraph: {
+    title: "Vigil — alertas de intrusión sin cámaras",
+    description:
+      "Un aviso que sube por una escalera de contactos de confianza, sin grabar tu casa. Demo estudiantil.",
+    type: "website",
+    locale: "es_MX",
+  },
   icons: {
     icon: [
       { url: "/icon-light-32x32.png", media: "(prefers-color-scheme: light)" },
@@ -30,6 +38,7 @@ const NAV = [
   { href: "/research", label: "Investigación" },
   { href: "/product", label: "Producto" },
   { href: "/pricing", label: "Precios" },
+  { href: "/marketing", label: "Marketing" },
 ];
 
 export default function RootLayout({
@@ -60,9 +69,21 @@ export default function RootLayout({
 
         <main className="mx-auto max-w-4xl px-4 py-10">{children}</main>
 
-        <footer className="mx-auto max-w-4xl px-4 pb-10 pt-4 text-xs text-neutral-600">
-          Demo estudiantil. Las notificaciones son simuladas y no se envían a
-          nadie. Vigil no contacta servicios de emergencia automáticamente.
+        <footer className="mx-auto max-w-4xl space-y-3 px-4 pb-10 pt-4 text-xs text-neutral-600">
+          <div className="flex flex-wrap gap-x-4 gap-y-1">
+            {NAV.map((item) => (
+              <Link key={item.href} href={item.href} className="hover:text-neutral-300">
+                {item.label}
+              </Link>
+            ))}
+            <a href="https://github.com/Emi21-hub/vigil" className="hover:text-neutral-300">
+              GitHub
+            </a>
+          </div>
+          <p>
+            Demo estudiantil en acceso anticipado. Las notificaciones son simuladas y no se
+            envían a nadie. Vigil no contacta servicios de emergencia automáticamente.
+          </p>
         </footer>
 
         {process.env.NODE_ENV === "production" && <Analytics />}
