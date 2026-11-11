@@ -31,7 +31,8 @@ export function HowItWorks() {
         Conoce más: <Link className="underline" href="/product">producto</Link> ·{" "}
         <Link className="underline" href="/research">investigación</Link> ·{" "}
         <Link className="underline" href="/pricing">precios</Link> ·{" "}
-        <Link className="underline" href="/marketing">marketing</Link>
+        <Link className="underline" href="/marketing">marketing</Link> ·{" "}
+        <Link className="underline" href="/chat">asesor</Link>
       </p>
     </section>
   );
