@@ -1,3 +1,85 @@
+// Pure logic for the home page A/B tests. No React or Supabase.
+// Rules: each visitor counts ONCE per test and variant, test sessions
+// (is_test) do not count, and a leader is named only with 20 views per variant.
+
+export type TestId = "headline" | "button";
+export type Variant = "A" | "B";
+export type EventKind = "view" | "click";
+
+export const MIN_VIEWS = 20;
+
+export const EXPERIMENTS: Record<TestId, { label: string; A: string; B: string }> = {
+  headline: {
+    label: "Main headline",
+    A: "Intrusion alerts for your home, without cameras",
+    B: "If someone breaks in, let someone who answers find out",
+  },
+  button: {
+    label: "Main button text",
+    A: "Try the demo",
+    B: "Try the demo for free",
+  },
+};
+
+export type AbEvent = {
+  test_id: string;
+  variant: string;
+  event: string;
+  visitor_id: string;
+  is_test: boolean;
+};
+
+export type VariantStats = { views: number; clicks: number; rate: number };
+export type TestSummary = {
+  A: VariantStats;
+  B: VariantStats;
+  leader: Variant | null;
+  note: string;
+};
+
+export function pickVariant(random: number): Variant {
+  return random < 0.5 ? "A" : "B";
+}
+
+function stats(events: AbEvent[], test: TestId, variant: Variant): VariantStats {
+  const views = new Set<string>();
+  const clicks = new Set<string>();
+  for (const e of events) {
+    if (e.is_test || e.test_id !== test || e.variant !== variant) continue;
+    if (e.event === "view") views.add(e.visitor_id);
+    if (e.event === "click") clicks.add(e.visitor_id);
+  }
+  // a click only counts if that visitor also has a view
+  const validClicks = [...clicks].filter((id) => views.has(id)).length;
+  return {
+    views: views.size,
+    clicks: validClicks,
+    rate: views.size === 0 ? 0 : validClicks / views.size,
+  };
+}
+
+export function summarize(events: AbEvent[], test: TestId): TestSummary {
+  const A = stats(events, test, "A");
+  const B = stats(events, test, "B");
+  if (A.views < MIN_VIEWS || B.views < MIN_VIEWS) {
+    return {
+      A, B, leader: null,
+      note: `No leader yet: ${MIN_VIEWS} views per variant are needed (A ${A.views}, B ${B.views}).`,
+    };
+  }
+  if (A.rate === B.rate) {
+    return { A, B, leader: null, note: "Tie: both variants have the same click rate." };
+  }
+  const leader: Variant = A.rate > B.rate ? "A" : "B";
+  return {
+    A, B, leader,
+    note: `Variant ${leader} is ahead. With few visitors the difference can be chance.`,
+  };
+}
+
+export function percent(rate: number): string {
+  return `${(rate * 100).toFixed(1)} %`;
+}
 // Logica pura de las pruebas A/B de la home. Sin React ni Supabase.
 // Reglas: cada visitante cuenta UNA vez por prueba y variante, las sesiones
 // de prueba (is_test) no cuentan, y solo se nombra lider con 20 vistas por variante.
