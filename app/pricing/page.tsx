@@ -1,6 +1,16 @@
 import PricingCalculator from "@/components/PricingCalculator";
 
 export const metadata = {
+  title: "Pricing — Vigil",
+  description: "Proposed plans and revenue calculator for Vigil (hypothesis).",
+};
+
+export default function PricingPage() {
+  return <PricingCalculator />;
+}
+import PricingCalculator from "@/components/PricingCalculator";
+
+export const metadata = {
   title: "Precios — Vigil",
   description: "Planes propuestos y calculadora de ingresos de Vigil (hipótesis).",
 };
