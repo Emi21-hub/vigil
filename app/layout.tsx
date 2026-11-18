@@ -4,6 +4,103 @@ import Link from "next/link";
 import "./globals.css";
 
 export const metadata: Metadata = {
+  title: "Vigil — intrusion alerts without cameras",
+  description:
+    "An intrusion alert system that escalates through a chain of trusted contacts, without recording your home.",
+  generator: "v0.app",
+  metadataBase: new URL("https://vigil-vigil21.vercel.app"),
+  openGraph: {
+    title: "Vigil — intrusion alerts without cameras",
+    description:
+      "An alert that climbs a ladder of trusted contacts, without recording your home. Student demo.",
+    type: "website",
+    locale: "en_US",
+  },
+  icons: {
+    icon: [
+      { url: "/icon-light-32x32.png", media: "(prefers-color-scheme: light)" },
+      { url: "/icon-dark-32x32.png", media: "(prefers-color-scheme: dark)" },
+      { url: "/icon.svg", type: "image/svg+xml" },
+    ],
+    apple: "/apple-icon.png",
+  },
+};
+
+export const viewport: Viewport = {
+  colorScheme: "dark",
+  themeColor: "#0a0a0a",
+};
+
+const NAV = [
+  { href: "/", label: "Home" },
+  { href: "/demo", label: "Demo" },
+  { href: "/contacts", label: "Contacts" },
+  { href: "/log", label: "History" },
+  { href: "/research", label: "Research" },
+  { href: "/product", label: "Product" },
+  { href: "/pricing", label: "Pricing" },
+  { href: "/marketing", label: "Marketing" },
+  { href: "/chat", label: "Advisor" },
+  { href: "/dashboard", label: "Dashboard" },
+  { href: "/docs", label: "Docs" },
+];
+
+export default function RootLayout({
+  children,
+}: Readonly<{ children: React.ReactNode }>) {
+  return (
+    // The inline style is on purpose: globals.css ships shadcn's light theme
+    // (:root { color-scheme: light }) and without this the <select>s and
+    // inputs render with light chrome on a dark background.
+    <html lang="en" style={{ colorScheme: "dark", background: "#0a0a0a" }}>
+      <body className="min-h-screen bg-neutral-950 text-neutral-100 antialiased">
+        <nav className="border-b border-neutral-800">
+          <div className="mx-auto flex max-w-4xl flex-wrap items-center gap-1 px-4 py-3">
+            <Link href="/" className="mr-4 font-medium tracking-tight">
+              Vigil
+            </Link>
+            {NAV.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                className="rounded px-3 py-1.5 text-sm text-neutral-400 transition hover:bg-neutral-900 hover:text-neutral-100"
+              >
+                {item.label}
+              </Link>
+            ))}
+          </div>
+        </nav>
+
+        <main className="mx-auto max-w-4xl px-4 py-10">{children}</main>
+
+        <footer className="mx-auto max-w-4xl space-y-3 px-4 pb-10 pt-4 text-xs text-neutral-600">
+          <div className="flex flex-wrap gap-x-4 gap-y-1">
+            {NAV.map((item) => (
+              <Link key={item.href} href={item.href} className="hover:text-neutral-300">
+                {item.label}
+              </Link>
+            ))}
+            <a href="https://github.com/Emi21-hub/vigil" className="hover:text-neutral-300">
+              GitHub
+            </a>
+          </div>
+          <p>
+            Student demo in early access. Notifications are simulated and are not sent to
+            anyone. Vigil does not contact emergency services automatically.
+          </p>
+        </footer>
+
+        {process.env.NODE_ENV === "production" && <Analytics />}
+      </body>
+    </html>
+  );
+}
+import { Analytics } from "@vercel/analytics/next";
+import type { Metadata, Viewport } from "next";
+import Link from "next/link";
+import "./globals.css";
+
+export const metadata: Metadata = {
   title: "Vigil — alertas de intrusión sin cámaras",
   description:
     "Sistema de alerta de intrusión que escala por una cadena de contactos de confianza, sin grabar tu casa.",
