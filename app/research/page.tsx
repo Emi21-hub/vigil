@@ -1,9 +1,9 @@
 import ResearchDashboard from "@/components/ResearchDashboard";
 
 export const metadata = {
-  title: "Investigación — Vigil",
+  title: "Research — Vigil",
   description:
-    "Casos globales, mercado en México, competidores y riesgos de un sistema de alerta de intrusión sin cámaras.",
+    "Global cases, the Mexican market, competitors and risks of an intrusion alert system without cameras.",
 };
 
 export default function ResearchPage() {
