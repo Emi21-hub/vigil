@@ -2,6 +2,16 @@ import DocsView from "@/components/DocsView";
 
 export const metadata = {
   title: "Docs — Vigil",
+  description: "Prompts, build log, impact and roadmap for Vigil.",
+};
+
+export default function Page() {
+  return <DocsView />;
+}
+import DocsView from "@/components/DocsView";
+
+export const metadata = {
+  title: "Docs — Vigil",
   description: "Prompts, bitácora, impacto y roadmap de Vigil.",
 };
 
