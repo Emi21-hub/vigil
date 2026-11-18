@@ -4,6 +4,122 @@ import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { EXPERIMENTS, pickVariant, type TestId, type Variant } from "@/lib/abTesting";
 
+// Each visitor gets a stable variant per test. The view is logged only after the
+// first interaction (so automated checks do not count as visitors), and each view
+// and click is logged only once per visitor.
+
+function safeGet(k: string): string | null {
+  try { return window.localStorage.getItem(k); } catch { return null; }
+}
+function safeSet(k: string, v: string) {
+  try { window.localStorage.setItem(k, v); } catch { /* no storage: nothing happens */ }
+}
+
+function visitorId(): string {
+  let id = safeGet("vigil_vid");
+  if (!id) {
+    id = (crypto.randomUUID?.() ?? String(Math.random()).slice(2) + Date.now()).replace(/-/g, "");
+    safeSet("vigil_vid", id);
+  }
+  return id;
+}
+
+function variantFor(test: TestId): Variant {
+  const stored = safeGet(`vigil_ab_${test}`);
+  if (stored === "A" || stored === "B") return stored;
+  const v = pickVariant(Math.random());
+  safeSet(`vigil_ab_${test}`, v);
+  return v;
+}
+
+async function log(test: TestId, variant: Variant, event: "view" | "click", isTest: boolean) {
+  const flag = `vigil_logged_${test}_${event}`;
+  if (safeGet(flag)) return;
+  safeSet(flag, "1");
+  await supabase.from("ab_events").insert({
+    test_id: test, variant, event, visitor_id: visitorId(), is_test: isTest,
+  });
+}
+
+const STEPS = [
+  { n: "Level 1", t: "You", d: "0 s", c: "border-amber-500/40 text-amber-300" },
+  { n: "Level 2", t: "Trusted contacts", d: "60 s (demo)", c: "border-neutral-700 text-neutral-300" },
+  { n: "Level 3", t: "Hand-off to a person", d: "120 s (demo)", c: "border-neutral-700 text-neutral-300" },
+];
+
+export default function AbHero() {
+  const [v, setV] = useState<{ headline: Variant; button: Variant } | null>(null);
+  const isTest = useRef(false);
+
+  useEffect(() => {
+    if (new URLSearchParams(window.location.search).get("ab_test") === "1") safeSet("vigil_is_test", "1");
+    isTest.current = safeGet("vigil_is_test") === "1";
+    const assigned = { headline: variantFor("headline"), button: variantFor("button") };
+    setV(assigned);
+
+    const onFirst = () => {
+      cleanup();
+      log("headline", assigned.headline, "view", isTest.current);
+      log("button", assigned.button, "view", isTest.current);
+    };
+    const evs = ["scroll", "mousemove", "touchstart", "keydown"] as const;
+    const cleanup = () => evs.forEach((e) => window.removeEventListener(e, onFirst));
+    evs.forEach((e) => window.addEventListener(e, onFirst, { passive: true }));
+    return cleanup;
+  }, []);
+
+  function onCta() {
+    if (v) {
+      log("headline", v.headline, "click", isTest.current);
+      log("button", v.button, "click", isTest.current);
+    }
+    document.getElementById("demo")?.scrollIntoView({ behavior: "smooth" });
+  }
+
+  return (
+    <section className="grid items-center gap-10 py-4 md:grid-cols-2">
+      <div>
+        <p className="mb-3 inline-block rounded-full border border-neutral-800 px-3 py-1 text-xs text-neutral-400">
+          Early access · student demo
+        </p>
+        {/* hidden until the variant is known, so nobody sees A and then B */}
+        <h1 className="text-3xl font-medium tracking-tight md:text-4xl" style={{ visibility: v ? "visible" : "hidden" }}>
+          {v ? EXPERIMENTS.headline[v.headline] : EXPERIMENTS.headline.A}
+        </h1>
+        <p className="mt-4 max-w-md text-neutral-400">
+          Vigil alerts you first, then your trusted contacts, and finally hands the alert to
+          a person. It does not record your home.
+        </p>
+        <button
+          onClick={onCta}
+          style={{ visibility: v ? "visible" : "hidden" }}
+          className="mt-6 rounded-lg bg-neutral-100 px-6 py-3 text-sm font-medium text-neutral-900 hover:bg-white"
+        >
+          {v ? EXPERIMENTS.button[v.button] : EXPERIMENTS.button.A}
+        </button>
+        <p className="mt-3 text-xs text-neutral-600">Alerts are simulated. Vigil does not contact emergency services.</p>
+      </div>
+
+      <div className="rounded-xl border border-neutral-800 bg-neutral-900/50 p-5" aria-label="Example of the alert ladder">
+        <p className="mb-3 text-xs uppercase tracking-wide text-neutral-500">How an alert climbs</p>
+        <ol className="space-y-3">
+          {STEPS.map((s) => (
+            <li key={s.n} className={"rounded-lg border p-3 " + s.c}>
+              <span className="text-xs opacity-70">{s.n} · {s.d}</span>
+              <p className="font-medium">{s.t}</p>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </section>
+  );
+}
+"use client";
+
+import { useEffect, useRef, useState } from "react";
+import { supabase } from "@/lib/supabase";
+import { EXPERIMENTS, pickVariant, type TestId, type Variant } from "@/lib/abTesting";
+
 // Cada visitante recibe una variante estable por prueba. La vista se registra solo
 // despues de la primera interaccion (asi los chequeos automaticos no cuentan como visitantes),
 // y cada vista y clic se registra una sola vez por visitante.
