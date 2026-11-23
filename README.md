@@ -1,33 +1,53 @@
-# vigil
+# Vigil
 
-This is a [Next.js](https://nextjs.org) project bootstrapped with [v0](https://v0.app).
+Privacy-first intrusion alerts for a home, with no cameras. When an alarm triggers, Vigil escalates through a ladder of people: first you, then your trusted contacts, then a hand-off to a person. It never dials emergency services by itself.
 
-## Built with v0
+Student project for Negocios Inteligentes y Comercio Digital (Universidad Iberoamericana). **All alerts are simulated and nothing is sent to anyone.**
 
-This repository is linked to a [v0](https://v0.app) project. You can continue developing by visiting the link below -- start new chats to make changes, and v0 will push commits directly to this repo. Every merge to `main` will automatically deploy.
+- Live site: https://vigil-vigil21.vercel.app
+- Guided walkthrough: https://vigil-vigil21.vercel.app/demo
 
-[Continue working on v0 →](https://v0.app/chat/projects/prj_JO0wFjSoBJGqaNl3C8nJUmbLJStY)
+## Pages
 
-## Getting Started
+| Route | What it does |
+|---|---|
+| / | Arm or disarm a demo property and simulate an intrusion (A/B-tested headline and button) |
+| /incident/[id] | Live escalation timeline: Tier 1 at 0 s, Tier 2 at 60 s, hand-off at 120 s (demo timings) |
+| /contacts, /log | Contacts by tier and incident history |
+| /research | Sourced market research read from Supabase, with filters, risk map and notes |
+| /product, /pricing | Segment hypotheses, 12 features marked Prototype or Planned, and a revenue calculator |
+| /marketing | Template-based marketing assets, A/B results, headline scorer |
+| /chat | Rule-based advisor (no AI model) with guardrails and human review flag |
+| /demo, /dashboard, /docs | Guided demo and agent map, live record counts and route check, prompt library, impact check and roadmap |
 
-First, run the development server:
+## Stack
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-```
+Next.js 16, React 19, TypeScript, Tailwind CSS v4, Supabase (Postgres) and Vercel. No paid APIs and no language model at run time.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Run locally
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+    pnpm install
+    pnpm dev
 
-## Learn More
+Create a Supabase project and set these environment variables (for example in .env.local):
 
-To learn more, take a look at the following resources:
+    NEXT_PUBLIC_SUPABASE_URL=your project url
+    NEXT_PUBLIC_SUPABASE_ANON_KEY=your anon key
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-- [v0 Documentation](https://v0.app/docs) - learn about v0 and how to use it.
+Then run the scripts in the sql folder in order (week1.sql to week5.sql) in the Supabase SQL Editor.
+
+## Tests
+
+    node --experimental-strip-types --test tests/*.test.mjs
+
+## Honest limits
+
+- Notifications are simulated; there is no real SMS, push or call.
+- The escalation advances only while the incident page is open (the tier is derived from the trigger time on every read). A real product needs a server-side job.
+- The demo tables are open to anonymous reads and writes, so no real personal data should be entered. There are no accounts.
+- Prices and conversion rates are hypotheses, not measurements. A/B tests name no leader until each variant has 20 views.
+- The advisor understands keywords only and is not AI.
+
+## Sources and AI use
+
+Research sources are linked next to every fact in /research. The code was written with an AI coding assistant from prompts I sent; the prompt library and the build log are at /docs. Ideas, decisions and testing are mine.
