@@ -133,7 +133,7 @@ export default function Dashboard() {
         <h3 className="pt-2 text-sm font-medium text-neutral-300">Latest simulated incidents</h3>
         {incidents === null ? <p className="text-sm text-neutral-500">Loading…</p> : incidents.length === 0 ? <p className="text-sm text-neutral-500">No incidents saved. Create one on <Link className="underline" href="/">Home</Link>.</p> : (
           <ul className="space-y-1 text-sm text-neutral-400">
-            {incidents.map((i) => <li key={i.id}>{new Date(i.triggered_at).toLocaleString("en-US")} · {i.status}</li>)}
+            {incidents.map((i) => <li key={i.id}>{new Date(i.triggered_at).toLocaleString("en-US")} · {String(i.status).replace(/_/g, " ")}</li>)}
           </ul>
         )}
       </section>
